@@ -365,3 +365,66 @@ test("R4: SEO, Schemas, Robots, Sitemap, E-E-A-T and Legal Compliance", async (t
     }
   });
 });
+
+test("R5: Share Toast Stacking, Meta Description Length, and OpenGraph Image Updates", async (t) => {
+  await t.test("Meta description length is strictly under 155 characters", () => {
+    assert.ok(
+      siteConfig.description.length < 155,
+      `siteConfig.description length (${siteConfig.description.length}) must be strictly < 155`
+    );
+    assert.ok(
+      siteConfig.description.length > 50,
+      `siteConfig.description length (${siteConfig.description.length}) must be descriptive`
+    );
+    assert.match(
+      siteConfig.description,
+      /Axkarl Reborn/,
+      "siteConfig.description must reference Axkarl Reborn"
+    );
+  });
+
+  await t.test("OpenGraph and Twitter metadata designate perfil.jpg as primary image", () => {
+    const indexPath = path.join(PROJECT_ROOT, ".next", "server", "app", "index.html");
+    if (fs.existsSync(indexPath)) {
+      const html = fs.readFileSync(indexPath, "utf-8");
+      assert.match(
+        html,
+        /<meta property="og:image" content="https:\/\/www\.axkar\.com\/images\/perfil\.jpg"/,
+        "index.html must render perfil.jpg as primary og:image"
+      );
+      assert.match(
+        html,
+        /<meta name="twitter:image" content="https:\/\/www\.axkar\.com\/images\/perfil\.jpg"/,
+        "index.html must render perfil.jpg as primary twitter:image"
+      );
+      assert.match(
+        html,
+        /"primaryImageOfPage":\{"@type":"ImageObject","url":"https:\/\/www\.axkar\.com\/images\/perfil\.jpg"\}/,
+        "JSON-LD primaryImageOfPage must reference perfil.jpg"
+      );
+    }
+  });
+
+  await t.test("ShareButton renders toast via React portal to document.body with proper z-index and accessibility", () => {
+    const shareButtonCode = fs.readFileSync(
+      path.join(PROJECT_ROOT, "src", "components", "ShareButton.tsx"),
+      "utf-8"
+    );
+    assert.match(shareButtonCode, /createPortal/);
+    assert.match(shareButtonCode, /document\.body/);
+    assert.match(shareButtonCode, /zIndex:\s*99999/);
+    assert.match(shareButtonCode, /role="status"/);
+    assert.match(shareButtonCode, /aria-live="polite"/);
+    assert.match(shareButtonCode, /pointerEvents:\s*"none"/);
+  });
+
+  await t.test("LinkInBio heading container has stacking context above avatar", () => {
+    const linkInBioCode = fs.readFileSync(
+      path.join(PROJECT_ROOT, "src", "components", "LinkInBio.tsx"),
+      "utf-8"
+    );
+    assert.match(linkInBioCode, /zIndex:\s*30/);
+    assert.match(linkInBioCode, /position:\s*"relative"/);
+  });
+});
+

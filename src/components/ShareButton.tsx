@@ -71,6 +71,7 @@ export function ShareButton() {
   return (
     <div style={{ display: "inline-flex", alignItems: "center" }}>
       <button
+        type="button"
         onClick={handleCopy}
         aria-label="Copiar enlace de esta página"
         style={{
@@ -104,7 +105,7 @@ export function ShareButton() {
             aria-live="polite"
             style={{
               position: "fixed",
-              bottom: "2.5rem",
+              bottom: "max(2.5rem, calc(1.5rem + env(safe-area-inset-bottom, 0px)))",
               left: "50%",
               transform: "translateX(-50%)",
               backgroundColor: "#1e1e24",
@@ -120,6 +121,8 @@ export function ShareButton() {
               gap: "0.5rem",
               border: "1px solid rgba(255, 255, 255, 0.1)",
               whiteSpace: "nowrap",
+              maxWidth: "calc(100vw - 2rem)",
+              boxSizing: "border-box",
               pointerEvents: "none",
               animation: "toastFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards",
             }}
@@ -147,6 +150,18 @@ export function ShareButton() {
               to {
                 opacity: 1;
                 transform: translate(-50%, 0);
+              }
+            }
+            @media (prefers-reduced-motion: reduce) {
+              @keyframes toastFadeIn {
+                from {
+                  opacity: 1;
+                  transform: translate(-50%, 0);
+                }
+                to {
+                  opacity: 1;
+                  transform: translate(-50%, 0);
+                }
               }
             }
           `,
