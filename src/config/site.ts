@@ -32,7 +32,7 @@ export const siteConfig = {
   locale: "es_ES",
   title: "Axkarl Reborn | Redes Sociales y Sitio Oficial",
   description:
-    "Espacio oficial de Axkarl Reborn. Conéctate y sígueme en mis redes sociales verificadas (Twitter/X, Facebook, Telegram, WhatsApp y TikTok) para estar al día con mis proyectos y novedades.",
+    "Espacio oficial de Axkarl Reborn. Conéctate y sígueme en mis redes sociales verificadas para estar al día con mis proyectos y novedades.",
   keywords:
     "Axkarl Reborn, @iamaxkarl, axkar.reborn, ax_karl, its.axkarl, redes sociales oficiales Axkarl Reborn, Twitter Axkarl, Facebook Axkarl, Telegram Axkarl, WhatsApp Axkarl, TikTok Axkarl, perfil oficial, creador digital, tecnología",
   profile: {

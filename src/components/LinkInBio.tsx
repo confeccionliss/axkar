@@ -152,6 +152,8 @@ export function LinkInBio() {
               gap: "0.625rem",
               marginBottom: "0.5rem",
               animationDelay: "200ms",
+              position: "relative",
+              zIndex: 30,
             }}
           >
             <h1

@@ -23,6 +23,14 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
+        url: `${siteConfig.url}/images/perfil.jpg`,
+        secureUrl: `${siteConfig.url}/images/perfil.jpg`,
+        width: 1024,
+        height: 1536,
+        type: "image/jpeg",
+        alt: `${siteConfig.name} | Foto de Perfil Oficial`,
+      },
+      {
         url: `${siteConfig.url}/images/og-image.jpg`,
         secureUrl: `${siteConfig.url}/images/og-image.jpg`,
         width: 1200,
@@ -39,6 +47,10 @@ export const metadata: Metadata = {
     site: siteConfig.twitterHandle,
     creator: siteConfig.twitterHandle,
     images: [
+      {
+        url: `${siteConfig.url}/images/perfil.jpg`,
+        alt: `${siteConfig.name} | Foto de Perfil Oficial`,
+      },
       {
         url: `${siteConfig.url}/images/og-image.jpg`,
         width: 1200,
@@ -87,7 +99,7 @@ export default function Page() {
         },
         primaryImageOfPage: {
           "@type": "ImageObject",
-          url: `${siteConfig.url}/images/og-image.jpg`,
+          url: `${siteConfig.url}/images/perfil.jpg`,
         },
         mainEntity: {
           "@id": `${siteConfig.url}/#person`,

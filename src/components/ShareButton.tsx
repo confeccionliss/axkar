@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { CheckCircle2, Share2 } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
@@ -8,9 +9,11 @@ const isDev = process.env.NODE_ENV === "development";
 
 export function ShareButton() {
   const [showToast, setShowToast] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    setMounted(true);
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -90,39 +93,47 @@ export function ShareButton() {
         <Share2 size={18} strokeWidth={2} fill="none" />
       </button>
 
-      {/* Toast Notification */}
-      {showToast && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: "2.5rem",
-            left: "50%",
-            transform: "translateX(-50%)",
-            backgroundColor: "#1e1e24",
-            color: "#ffffff",
-            padding: "0.75rem 1.5rem",
-            borderRadius: "9999px",
-            boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
-            fontSize: "0.875rem",
-            fontWeight: 600,
-            zIndex: 9999,
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            whiteSpace: "nowrap",
-            animation: "toastFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards",
-          }}
-        >
-          <CheckCircle2
-            size={20}
-            strokeWidth={2}
-            fill="none"
-            className="text-emerald-500"
-          />
-          <span>Enlace copiado</span>
-        </div>
-      )}
+      {/* Toast Notification rendered via Portal to escape stacking contexts and overflow clipping */}
+      {mounted &&
+        showToast &&
+        typeof document !== "undefined" &&
+        document.body &&
+        createPortal(
+          <div
+            role="status"
+            aria-live="polite"
+            style={{
+              position: "fixed",
+              bottom: "2.5rem",
+              left: "50%",
+              transform: "translateX(-50%)",
+              backgroundColor: "#1e1e24",
+              color: "#ffffff",
+              padding: "0.75rem 1.5rem",
+              borderRadius: "9999px",
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.25)",
+              fontSize: "0.875rem",
+              fontWeight: 600,
+              zIndex: 99999,
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              whiteSpace: "nowrap",
+              pointerEvents: "none",
+              animation: "toastFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+            }}
+          >
+            <CheckCircle2
+              size={20}
+              strokeWidth={2}
+              fill="none"
+              className="text-emerald-500"
+            />
+            <span>Enlace copiado</span>
+          </div>,
+          document.body
+        )}
 
       {/* CSS Animation injection */}
       <style
