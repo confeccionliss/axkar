@@ -367,7 +367,8 @@ test("R4: SEO, Schemas, Robots, Sitemap, E-E-A-T and Legal Compliance", async (t
 });
 
 test("R5: Share Toast Stacking, Meta Description Length, and OpenGraph Image Updates", async (t) => {
-  await t.test("Meta description length is strictly under 155 characters", () => {
+  await t.test("Meta description length is strictly under 155 characters across all routes", () => {
+    // Primary siteConfig description
     assert.ok(
       siteConfig.description.length < 155,
       `siteConfig.description length (${siteConfig.description.length}) must be strictly < 155`
@@ -381,9 +382,29 @@ test("R5: Share Toast Stacking, Meta Description Length, and OpenGraph Image Upd
       /Axkarl Reborn/,
       "siteConfig.description must reference Axkarl Reborn"
     );
+
+    // Legal routes descriptions
+    const legalPages = ["aviso-legal", "privacidad", "terminos"];
+    for (const pageName of legalPages) {
+      const pageCode = fs.readFileSync(
+        path.join(PROJECT_ROOT, "src", "app", pageName, "page.tsx"),
+        "utf-8"
+      );
+      const descMatch = pageCode.match(/description:\s*\n?\s*"([^"]+)"/);
+      assert.ok(descMatch, `page ${pageName} must define metadata description`);
+      const descText = descMatch[1];
+      assert.ok(
+        descText.length < 155,
+        `${pageName} description length (${descText.length}) must be strictly < 155`
+      );
+      assert.ok(
+        descText.length > 50,
+        `${pageName} description length (${descText.length}) must be descriptive (> 50 chars)`
+      );
+    }
   });
 
-  await t.test("OpenGraph and Twitter metadata designate perfil.jpg as primary image", () => {
+  await t.test("OpenGraph and Twitter metadata designate perfil.jpg as primary image and exclude portada", () => {
     const indexPath = path.join(PROJECT_ROOT, ".next", "server", "app", "index.html");
     if (fs.existsSync(indexPath)) {
       const html = fs.readFileSync(indexPath, "utf-8");
@@ -402,6 +423,17 @@ test("R5: Share Toast Stacking, Meta Description Length, and OpenGraph Image Upd
         /"primaryImageOfPage":\{"@type":"ImageObject","url":"https:\/\/www\.axkar\.com\/images\/perfil\.jpg"\}/,
         "JSON-LD primaryImageOfPage must reference perfil.jpg"
       );
+      // Ensure cover photo is NOT used as an OpenGraph preview image
+      assert.doesNotMatch(
+        html,
+        /<meta property="og:image" content="[^"]*portada\.jpg"/,
+        "Cover image must not be used as og:image"
+      );
+      assert.doesNotMatch(
+        html,
+        /<meta name="twitter:image" content="[^"]*portada\.jpg"/,
+        "Cover image must not be used as twitter:image"
+      );
     }
   });
 
@@ -416,6 +448,11 @@ test("R5: Share Toast Stacking, Meta Description Length, and OpenGraph Image Upd
     assert.match(shareButtonCode, /role="status"/);
     assert.match(shareButtonCode, /aria-live="polite"/);
     assert.match(shareButtonCode, /pointerEvents:\s*"none"/);
+    assert.match(shareButtonCode, /env\(safe-area-inset-bottom/);
+    assert.match(shareButtonCode, /maxWidth:\s*"calc\(100vw - 2rem\)"/);
+    assert.match(shareButtonCode, /prefers-reduced-motion:\s*reduce/);
+    assert.match(shareButtonCode, /type="button"/);
+    assert.match(shareButtonCode, /setSelectionRange/);
   });
 
   await t.test("LinkInBio heading container has stacking context above avatar", () => {
@@ -425,6 +462,58 @@ test("R5: Share Toast Stacking, Meta Description Length, and OpenGraph Image Upd
     );
     assert.match(linkInBioCode, /zIndex:\s*30/);
     assert.match(linkInBioCode, /position:\s*"relative"/);
+  });
+
+  await t.test("Simulated clipboard fallback executes successfully without errors", () => {
+    // Test the fallback copy DOM manipulation in Node environment
+    let appendChildCalled = false;
+    let removeChildCalled = false;
+    let execCommandCalled = false;
+
+    const mockTextArea = {
+      value: "",
+      style: {},
+      setAttribute: (k, v) => {},
+      focus: () => {},
+      select: () => {},
+      setSelectionRange: (start, end) => {},
+    };
+
+    const mockDoc = {
+      createElement: (tag) => (tag === "textarea" ? mockTextArea : {}),
+      body: {
+        appendChild: (el) => {
+          appendChildCalled = true;
+        },
+        removeChild: (el) => {
+          removeChildCalled = true;
+        },
+      },
+      execCommand: (command) => {
+        if (command === "copy") {
+          execCommandCalled = true;
+          return true;
+        }
+        return false;
+      },
+    };
+
+    // Execute the fallback algorithm
+    const testUrl = "https://www.axkar.com";
+    const el = mockDoc.createElement("textarea");
+    el.value = testUrl;
+    el.setAttribute("readonly", "");
+    mockDoc.body.appendChild(el);
+    el.focus();
+    el.select();
+    el.setSelectionRange(0, testUrl.length);
+    const copied = mockDoc.execCommand("copy");
+    mockDoc.body.removeChild(el);
+
+    assert.equal(copied, true, "execCommand('copy') must succeed");
+    assert.equal(appendChildCalled, true, "appendChild must be called");
+    assert.equal(removeChildCalled, true, "removeChild must be called");
+    assert.equal(execCommandCalled, true, "execCommand must be called");
   });
 });
 

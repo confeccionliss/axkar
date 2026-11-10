@@ -10,11 +10,14 @@ const isDev = process.env.NODE_ENV === "development";
 export function ShareButton() {
   const [showToast, setShowToast] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const mountedRef = useRef(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setMounted(true);
+    mountedRef.current = true;
     return () => {
+      mountedRef.current = false;
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -22,12 +25,15 @@ export function ShareButton() {
   }, []);
 
   const triggerToast = () => {
+    if (!mountedRef.current) return;
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
     setShowToast(true);
     timeoutRef.current = setTimeout(() => {
-      setShowToast(false);
+      if (mountedRef.current) {
+        setShowToast(false);
+      }
       timeoutRef.current = null;
     }, 2500);
   };
@@ -51,11 +57,15 @@ export function ShareButton() {
     try {
       const textArea = document.createElement("textarea");
       textArea.value = shareUrl;
+      textArea.setAttribute("readonly", "");
       textArea.style.position = "fixed"; // avoid scrolling to bottom
+      textArea.style.top = "0";
       textArea.style.left = "-9999px"; // hide off-screen
+      textArea.style.opacity = "0";
       document.body.appendChild(textArea);
       textArea.focus();
       textArea.select();
+      textArea.setSelectionRange(0, shareUrl.length);
       const successful = document.execCommand("copy");
       document.body.removeChild(textArea);
       if (successful) {
