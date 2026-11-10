@@ -42,20 +42,27 @@ export function ShareButton() {
     const shareUrl =
       typeof window !== "undefined" ? window.location.href : siteConfig.pageUrl;
 
-    // Check if navigator.clipboard is available (blocked in insecure HTTP environments)
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      try {
+    // Check if navigator.clipboard is available (safeguarded against SecurityError in restricted iframes)
+    try {
+      if (
+        typeof navigator !== "undefined" &&
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === "function"
+      ) {
         await navigator.clipboard.writeText(shareUrl);
         triggerToast();
         return;
-      } catch (err) {
-        if (isDev) console.error("Failed to copy link via clipboard API:", err);
       }
+    } catch (err) {
+      if (isDev) console.error("Failed to copy link via clipboard API:", err);
     }
 
-    // Fallback for insecure contexts (e.g. mobile testing on local network HTTP)
+    // Fallback for insecure contexts or when navigator.clipboard fails
+    if (typeof document === "undefined" || !document.body) return;
+
+    let textArea: HTMLTextAreaElement | null = null;
     try {
-      const textArea = document.createElement("textarea");
+      textArea = document.createElement("textarea");
       textArea.value = shareUrl;
       textArea.setAttribute("readonly", "");
       textArea.style.position = "fixed"; // avoid scrolling to bottom
@@ -67,7 +74,6 @@ export function ShareButton() {
       textArea.select();
       textArea.setSelectionRange(0, shareUrl.length);
       const successful = document.execCommand("copy");
-      document.body.removeChild(textArea);
       if (successful) {
         triggerToast();
       } else {
@@ -75,6 +81,10 @@ export function ShareButton() {
       }
     } catch (fallbackErr) {
       if (isDev) console.error("Fallback copy failed:", fallbackErr);
+    } finally {
+      if (textArea && document.body && document.body.contains(textArea)) {
+        document.body.removeChild(textArea);
+      }
     }
   };
 
@@ -84,6 +94,7 @@ export function ShareButton() {
         type="button"
         onClick={handleCopy}
         aria-label="Copiar enlace de esta página"
+        title="Copiar enlace de esta página"
         style={{
           display: "inline-flex",
           alignItems: "center",

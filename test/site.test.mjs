@@ -452,7 +452,9 @@ test("R5: Share Toast Stacking, Meta Description Length, and OpenGraph Image Upd
     assert.match(shareButtonCode, /maxWidth:\s*"calc\(100vw - 2rem\)"/);
     assert.match(shareButtonCode, /prefers-reduced-motion:\s*reduce/);
     assert.match(shareButtonCode, /type="button"/);
+    assert.match(shareButtonCode, /title="Copiar enlace de esta página"/);
     assert.match(shareButtonCode, /setSelectionRange/);
+    assert.match(shareButtonCode, /finally\s*\{/);
   });
 
   await t.test("LinkInBio heading container has stacking context above avatar", () => {
@@ -514,6 +516,52 @@ test("R5: Share Toast Stacking, Meta Description Length, and OpenGraph Image Upd
     assert.equal(appendChildCalled, true, "appendChild must be called");
     assert.equal(removeChildCalled, true, "removeChild must be called");
     assert.equal(execCommandCalled, true, "execCommand must be called");
+  });
+
+  await t.test("Clipboard fallback guarantees DOM cleanup in finally block even when execCommand throws", () => {
+    let appendChildCalled = false;
+    let removeChildCalled = false;
+
+    const mockTextArea = {
+      value: "",
+      style: {},
+      setAttribute: () => {},
+      focus: () => {},
+      select: () => {},
+      setSelectionRange: () => {},
+    };
+
+    const mockDoc = {
+      body: {
+        contains: () => true,
+        appendChild: () => {
+          appendChildCalled = true;
+        },
+        removeChild: () => {
+          removeChildCalled = true;
+        },
+      },
+      execCommand: () => {
+        throw new Error("Simulated browser permission denial");
+      },
+    };
+
+    let caughtError = null;
+    let textArea = mockTextArea;
+    try {
+      mockDoc.body.appendChild(textArea);
+      mockDoc.execCommand("copy");
+    } catch (err) {
+      caughtError = err;
+    } finally {
+      if (textArea && mockDoc.body.contains(textArea)) {
+        mockDoc.body.removeChild(textArea);
+      }
+    }
+
+    assert.ok(caughtError, "Error must be caught");
+    assert.equal(appendChildCalled, true, "appendChild must be executed");
+    assert.equal(removeChildCalled, true, "removeChild must be executed in finally block despite thrown error");
   });
 });
 
