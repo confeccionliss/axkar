@@ -1,0 +1,36 @@
+{
+  "name": "redes",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "node --experimental-strip-types --test test/site.test.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "1.7.0",
+    "next": "16.2.9",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.2.2",
+    "@types/node": "^25.5.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "tailwindcss": "4.2.2",
+    "typescript": "6.0.2"
+  },
+  "browserslist": [
+    "chrome >= 96",
+    "firefox >= 96",
+    "safari >= 15",
+    "edge >= 96",
+    "opera >= 82",
+    "samsung >= 16",
+    "not dead"
+  ]
+}
+
