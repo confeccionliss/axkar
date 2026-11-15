@@ -27,14 +27,14 @@ export const siteConfig = {
   /** URL pública canónica donde se despliega este sitio */
   url: "https://www.axkar.com",
   pageUrl: "https://www.axkar.com",
-  twitterHandle: "@iamaxkarl",
+  twitterHandle: "@axkarlreborn",
   contactEmail: "contacto@axkar.com",
   locale: "es_ES",
   title: "Axkarl Reborn | Redes Sociales y Sitio Oficial",
   description:
     "Espacio oficial de Axkarl Reborn. Conéctate y sígueme en mis redes sociales verificadas para estar al día con mis proyectos y novedades.",
   keywords:
-    "Axkarl Reborn, @iamaxkarl, axkar.reborn, ax_karl, its.axkarl, redes sociales oficiales Axkarl Reborn, Twitter Axkarl, Facebook Axkarl, Telegram Axkarl, WhatsApp Axkarl, TikTok Axkarl, perfil oficial, creador digital, tecnología",
+    "Axkarl Reborn, @axkarlreborn, axkar.reborn, ax_karl, its.axkarl, redes sociales oficiales Axkarl Reborn, Twitter Axkarl, Facebook Axkarl, Telegram Axkarl, WhatsApp Axkarl, TikTok Axkarl, perfil oficial, creador digital, tecnología",
   profile: {
     avatarSrc: "/images/perfil.jpg",
     avatarAlt: "Foto de perfil oficial de Axkarl Reborn",
@@ -83,7 +83,7 @@ export const socialLinks: LinkItem[] = [
     svgPath:
       "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.736-8.847L1.254 2.25H8.08l4.259 5.631 5.905-5.631Zm-1.161 17.52h1.833L7.084 4.126H5.117Z",
     label: "Twitter (X)",
-    sublabel: "@iamaxkarl",
+    sublabel: "@axkarlreborn",
     href: "https://x.com/iamaxkarl",
     color: "#010101",
   },
