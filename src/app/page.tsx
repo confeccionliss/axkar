@@ -109,7 +109,7 @@ export default function Page() {
         "@type": "Person",
         "@id": `${siteConfig.url}/#person`,
         name: siteConfig.name,
-        alternateName: ["iamaxkarl", "axkarl"],
+        alternateName: ["axkarlreborn", "axkarl"],
         url: siteConfig.url,
         image: `${siteConfig.url}/images/perfil.jpg`,
         description: siteConfig.description,

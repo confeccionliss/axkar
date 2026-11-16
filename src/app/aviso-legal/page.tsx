@@ -59,7 +59,7 @@ export default function AvisoLegalPage() {
               </li>
               <li><strong>Canal en Twitter (X):</strong>{" "}
                 <a
-                  href="https://x.com/iamaxkarl"
+                  href="https://x.com/axkarlreborn"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-indigo-600 underline font-medium"

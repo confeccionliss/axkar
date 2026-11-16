@@ -11,7 +11,7 @@ test("R1: Complete Branding and Metadata Reset", async (t) => {
     assert.equal(siteConfig.name, "Axkarl Reborn");
     assert.equal(siteConfig.url, "https://www.axkar.com");
     assert.equal(siteConfig.pageUrl, "https://www.axkar.com");
-    assert.equal(siteConfig.twitterHandle, "@iamaxkarl");
+    assert.equal(siteConfig.twitterHandle, "@axkarlreborn");
     assert.equal(siteConfig.publisher, "Axkarl Reborn");
     assert.equal(siteConfig.creator, "Axkarl Reborn");
     assert.match(siteConfig.title, /Axkarl Reborn/);
@@ -118,10 +118,10 @@ test("R2: Social Buttons Configuration", async (t) => {
     assert.deepEqual(ids, ["telegram", "tiktok", "twitter", "facebook", "whatsapp"]);
   });
 
-  await t.test("Twitter link points to https://x.com/iamaxkarl", () => {
+  await t.test("Twitter link points to https://x.com/axkarlreborn", () => {
     const link = socialLinks.find((l) => l.id === "twitter");
     assert.ok(link);
-    assert.equal(link.href, "https://x.com/iamaxkarl");
+    assert.equal(link.href, "https://x.com/axkarlreborn");
   });
 
   await t.test("Facebook link points to https://facebook.com/axkar.reborn", () => {
@@ -351,7 +351,7 @@ test("R4: SEO, Schemas, Robots, Sitemap, E-E-A-T and Legal Compliance", async (t
       assert.match(html, /WebSite/);
       assert.match(html, /portada\.jpg/);
       assert.match(html, /perfil\.jpg/);
-      assert.match(html, /https:\/\/x\.com\/iamaxkarl/);
+      assert.match(html, /https:\/\/x\.com\/axkarlreborn/);
       assert.match(html, /https:\/\/facebook\.com\/axkar.reborn/);
       assert.match(html, /https:\/\/t\.me\/ax_karl/);
       assert.match(html, /https:\/\/chat\.whatsapp\.com\/DVdS5lbfY805uxvWdo4jYs/);
