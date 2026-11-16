@@ -17,6 +17,8 @@ test("R1: Complete Branding and Metadata Reset", async (t) => {
     assert.match(siteConfig.title, /Axkarl Reborn/);
     assert.match(siteConfig.description, /Axkarl Reborn/);
     assert.ok(siteConfig.keywords.length > 20);
+    assert.match(siteConfig.keywords, /@axkarlreborn/);
+    assert.doesNotMatch(siteConfig.keywords, /iamaxkarl/i);
   });
 
   await t.test("Profile avatar and cover are configured with user assets", () => {
@@ -44,6 +46,7 @@ test("R1: Complete Branding and Metadata Reset", async (t) => {
       /uniforme/i,
       /50373317181/,
       /confeccionliss/i,
+      /iamaxkarl/i,
     ];
 
     function checkDir(dir) {
@@ -122,6 +125,7 @@ test("R2: Social Buttons Configuration", async (t) => {
     const link = socialLinks.find((l) => l.id === "twitter");
     assert.ok(link);
     assert.equal(link.href, "https://x.com/axkarlreborn");
+    assert.equal(link.sublabel, "@axkarlreborn");
   });
 
   await t.test("Facebook link points to https://facebook.com/axkar.reborn", () => {
@@ -281,6 +285,8 @@ test("R4: SEO, Schemas, Robots, Sitemap, E-E-A-T and Legal Compliance", async (t
     assert.match(pageCode, /openGraph/);
     assert.match(pageCode, /robots/);
     assert.match(pageCode, /twitter/);
+    assert.match(pageCode, /axkarlreborn/);
+    assert.doesNotMatch(pageCode, /iamaxkarl/i);
   });
 
   await t.test("Semantic headings (H1, H2) are present in LinkInBio.tsx and pills/checks are absent", () => {
@@ -308,9 +314,16 @@ test("R4: SEO, Schemas, Robots, Sitemap, E-E-A-T and Legal Compliance", async (t
       assert.equal(fs.existsSync(fullPath), true, `File must exist: ${lp}`);
       const content = fs.readFileSync(fullPath, "utf-8");
       assert.doesNotMatch(content, /TODO/i);
+      assert.doesNotMatch(content, /iamaxkarl/i);
       assert.match(content, /Axkarl Reborn/);
       assert.match(content, /canonical/);
     }
+    const avisoContent = fs.readFileSync(
+      path.join(PROJECT_ROOT, "src", "app", "aviso-legal", "page.tsx"),
+      "utf-8"
+    );
+    assert.match(avisoContent, /https:\/\/x\.com\/axkarlreborn/);
+    assert.match(avisoContent, /siteConfig\.twitterHandle/);
   });
 
   await t.test("SSG compliance: no dynamic runtime headers or cookies in public routes", () => {
@@ -362,6 +375,15 @@ test("R4: SEO, Schemas, Robots, Sitemap, E-E-A-T and Legal Compliance", async (t
       assert.doesNotMatch(html, /Confecciones\s*Liss/i);
       assert.doesNotMatch(html, /scrub/i);
       assert.doesNotMatch(html, /uniforme/i);
+      assert.doesNotMatch(html, /iamaxkarl/i);
+    }
+
+    const avisoPath = path.join(PROJECT_ROOT, ".next", "server", "app", "aviso-legal.html");
+    if (fs.existsSync(avisoPath)) {
+      const avisoHtml = fs.readFileSync(avisoPath, "utf-8");
+      assert.match(avisoHtml, /https:\/\/x\.com\/axkarlreborn/);
+      assert.match(avisoHtml, /@axkarlreborn/);
+      assert.doesNotMatch(avisoHtml, /iamaxkarl/i);
     }
   });
 });
